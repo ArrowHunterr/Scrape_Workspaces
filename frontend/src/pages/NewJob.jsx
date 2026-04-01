@@ -405,7 +405,7 @@ export default function NewJob() {
                 <SelectTrigger data-testid="captcha-select">
                   <SelectValue placeholder="Select captcha solver..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="z-50">
                   <SelectItem value="none">None</SelectItem>
                   <SelectItem value="2captcha">2Captcha</SelectItem>
                   <SelectItem value="nopecha">NopeCHA</SelectItem>

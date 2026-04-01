@@ -43,9 +43,9 @@ class PaginationConfig(BaseModel):
     max_pages: int = 5
 
 class JobCreate(BaseModel):
-    name: str
-    urls: List[str]
-    selectors: List[SelectorConfig]
+    name: str = Field(..., min_length=1, description="Job name is required")
+    urls: List[str] = Field(..., min_length=1, description="At least one URL is required")
+    selectors: List[SelectorConfig] = Field(..., min_length=1, description="At least one selector is required")
     pagination: Optional[PaginationConfig] = None
     template_id: Optional[str] = None
     use_proxy: bool = False

@@ -3,12 +3,16 @@ Playwright Scraping Engine with Stealth, Proxy Rotation, and Captcha Handling
 """
 import asyncio
 import logging
+import os
 import random
 import httpx
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from playwright.async_api import async_playwright, BrowserContext, Page
-from playwright_stealth import stealth
+from playwright_stealth import Stealth
+
+# Set Playwright browsers path
+os.environ['PLAYWRIGHT_BROWSERS_PATH'] = '/pw-browsers'
 
 # Directories
 OUTPUTS_DIR = Path("/app/data/outputs")
@@ -275,7 +279,9 @@ async def scrape_url(
     max_pages = pagination.get('max_pages', 5) if pagination and pagination.get('enabled') else 1
     
     page = await context.new_page()
-    await stealth(page)
+    # Apply stealth mode
+    stealth_config = Stealth()
+    await stealth_config.apply_stealth_async(page)
     
     try:
         while page_num <= max_pages:
