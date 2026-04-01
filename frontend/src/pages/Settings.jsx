@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { 
   FloppyDisk, 
@@ -28,11 +28,7 @@ export default function Settings() {
     captchaNopechaKey: ""
   });
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/settings`);
       setFormData({
@@ -45,7 +41,11 @@ export default function Settings() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

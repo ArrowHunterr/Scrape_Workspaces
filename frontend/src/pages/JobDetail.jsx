@@ -51,7 +51,7 @@ export default function JobDetail() {
     }
   }, [jobId, navigate]);
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/jobs/${jobId}/logs`);
       setLogs(res.data);
@@ -59,31 +59,33 @@ export default function JobDetail() {
     } catch (error) {
       setLogs("No logs available.");
     }
-  };
+  }, [jobId]);
 
-  const fetchOutput = async () => {
+  const fetchOutput = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/jobs/${jobId}/output`);
       setOutput(res.data);
     } catch (error) {
       setOutput(null);
     }
-  };
+  }, [jobId]);
 
   useEffect(() => {
     fetchJob();
     fetchOutput();
-    
+  }, [fetchJob, fetchOutput]);
+
+  useEffect(() => {
     // Poll for updates if job is running
+    if (job?.status !== "running" && job?.status !== "pending") return;
+    
     const interval = setInterval(() => {
-      if (job?.status === "running" || job?.status === "pending") {
-        fetchJob();
-        fetchOutput();
-      }
+      fetchJob();
+      fetchOutput();
     }, 3000);
     
     return () => clearInterval(interval);
-  }, [fetchJob, job?.status]);
+  }, [fetchJob, fetchOutput, job?.status]);
 
   const handleDownload = () => {
     if (!output) return;

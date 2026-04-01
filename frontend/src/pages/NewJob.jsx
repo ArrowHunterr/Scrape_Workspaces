@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { 
@@ -30,8 +30,8 @@ export default function NewJob() {
   
   const [formData, setFormData] = useState({
     name: "",
-    urls: [""],
-    selectors: [{ name: "", selector: "", attribute: "" }],
+    urls: [{ id: crypto.randomUUID(), value: "" }],
+    selectors: [{ id: crypto.randomUUID(), name: "", selector: "", attribute: "" }],
     useProxy: false,
     captchaSolver: "",
     paginationEnabled: false,
@@ -40,18 +40,18 @@ export default function NewJob() {
     templateId: ""
   });
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/templates`);
       setTemplates(res.data);
     } catch (error) {
       console.error("Failed to fetch templates:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
   const handleTemplateSelect = (templateId) => {
     if (templateId === "none") {
@@ -65,6 +65,7 @@ export default function NewJob() {
         ...prev,
         templateId: template.id,
         selectors: template.selectors.map(s => ({
+          id: crypto.randomUUID(),
           name: s.name,
           selector: s.selector,
           attribute: s.attribute || ""
@@ -81,7 +82,7 @@ export default function NewJob() {
   const addUrl = () => {
     setFormData(prev => ({
       ...prev,
-      urls: [...prev.urls, ""]
+      urls: [...prev.urls, { id: crypto.randomUUID(), value: "" }]
     }));
   };
 
@@ -95,14 +96,14 @@ export default function NewJob() {
   const updateUrl = (index, value) => {
     setFormData(prev => ({
       ...prev,
-      urls: prev.urls.map((url, i) => i === index ? value : url)
+      urls: prev.urls.map((url, i) => i === index ? { ...url, value } : url)
     }));
   };
 
   const addSelector = () => {
     setFormData(prev => ({
       ...prev,
-      selectors: [...prev.selectors, { name: "", selector: "", attribute: "" }]
+      selectors: [...prev.selectors, { id: crypto.randomUUID(), name: "", selector: "", attribute: "" }]
     }));
   };
 
@@ -131,7 +132,7 @@ export default function NewJob() {
       return;
     }
     
-    const validUrls = formData.urls.filter(u => u.trim());
+    const validUrls = formData.urls.filter(u => u.value.trim()).map(u => u.value);
     if (validUrls.length === 0) {
       toast.error("At least one URL is required");
       return;
@@ -237,9 +238,9 @@ export default function NewJob() {
           </div>
           <div className="space-y-2">
             {formData.urls.map((url, i) => (
-              <div key={i} className="flex gap-2">
+              <div key={url.id} className="flex gap-2">
                 <Input
-                  value={url}
+                  value={url.value}
                   onChange={(e) => updateUrl(i, e.target.value)}
                   placeholder="https://example.com/page"
                   className="font-mono text-sm"
@@ -281,7 +282,7 @@ export default function NewJob() {
           </div>
           <div className="space-y-3">
             {formData.selectors.map((sel, i) => (
-              <div key={i} className="grid grid-cols-12 gap-2 items-start">
+              <div key={sel.id} className="grid grid-cols-12 gap-2 items-start">
                 <div className="col-span-3">
                   <Input
                     value={sel.name}

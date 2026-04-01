@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { 
   Plus, 
@@ -58,7 +58,7 @@ export default function Templates() {
     defaultCaptchaSolver: ""
   });
 
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     try {
       const res = await axios.get(`${API}/templates`);
       setTemplates(res.data);
@@ -68,17 +68,17 @@ export default function Templates() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTemplates();
-  }, []);
+  }, [fetchTemplates]);
 
   const resetForm = () => {
     setFormData({
       name: "",
       description: "",
-      selectors: [{ name: "", selector: "", attribute: "" }],
+      selectors: [{ id: crypto.randomUUID(), name: "", selector: "", attribute: "" }],
       paginationEnabled: false,
       nextSelector: "",
       maxPages: 5,
@@ -98,6 +98,7 @@ export default function Templates() {
       name: template.name,
       description: template.description || "",
       selectors: template.selectors.map(s => ({
+        id: crypto.randomUUID(),
         name: s.name,
         selector: s.selector,
         attribute: s.attribute || ""
@@ -113,7 +114,7 @@ export default function Templates() {
   const addSelector = () => {
     setFormData(prev => ({
       ...prev,
-      selectors: [...prev.selectors, { name: "", selector: "", attribute: "" }]
+      selectors: [...prev.selectors, { id: crypto.randomUUID(), name: "", selector: "", attribute: "" }]
     }));
   };
 
@@ -350,7 +351,7 @@ export default function Templates() {
               </div>
               <div className="space-y-2">
                 {formData.selectors.map((sel, i) => (
-                  <div key={i} className="flex gap-2 items-center">
+                  <div key={sel.id} className="flex gap-2 items-center">
                     <Input
                       value={sel.name}
                       onChange={(e) => updateSelector(i, "name", e.target.value)}

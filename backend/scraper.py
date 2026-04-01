@@ -4,7 +4,7 @@ Playwright Scraping Engine with Stealth, Proxy Rotation, and Captcha Handling
 import asyncio
 import logging
 import os
-import random
+import secrets
 import httpx
 from pathlib import Path
 from typing import List, Dict, Any, Optional
@@ -28,7 +28,6 @@ class JobLogger:
         self.log_path = LOGS_DIR / f"{job_id}.log"
         
     def log(self, message: str, level: str = "INFO"):
-        timestamp = asyncio.get_event_loop().time() if asyncio.get_event_loop().is_running() else 0
         log_line = f"[{level}] {message}\n"
         with open(self.log_path, "a") as f:
             f.write(log_line)
@@ -184,7 +183,9 @@ class CaptchaSolver:
 
 async def human_like_delay(min_ms: int = 500, max_ms: int = 2000):
     """Random delay to simulate human behavior"""
-    delay = random.uniform(min_ms, max_ms) / 1000
+    # Use secrets for unpredictable delays
+    delay_range = max_ms - min_ms
+    delay = (min_ms + secrets.randbelow(delay_range + 1)) / 1000
     await asyncio.sleep(delay)
 
 
@@ -193,12 +194,13 @@ async def human_like_mouse_move(page: Page):
     try:
         viewport = page.viewport_size
         if viewport:
-            for _ in range(random.randint(2, 5)):
-                x = random.randint(100, viewport['width'] - 100)
-                y = random.randint(100, viewport['height'] - 100)
+            num_moves = 2 + secrets.randbelow(4)  # 2-5 moves
+            for _ in range(num_moves):
+                x = 100 + secrets.randbelow(viewport['width'] - 200)
+                y = 100 + secrets.randbelow(viewport['height'] - 200)
                 await page.mouse.move(x, y)
                 await human_like_delay(100, 300)
-    except:
+    except Exception:
         pass
 
 
@@ -214,7 +216,7 @@ async def check_for_cloudflare(page: Page) -> bool:
             "ray ID"
         ]
         return any(ind.lower() in content.lower() for ind in indicators)
-    except:
+    except Exception:
         return False
 
 
@@ -380,6 +382,7 @@ async def run_scraping_job(
     
     all_extracted = []
     errors = []
+    status = "pending"  # Initialize status to avoid undefined variable
     
     try:
         async with async_playwright() as p:
