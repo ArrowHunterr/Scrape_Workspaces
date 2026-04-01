@@ -1,0 +1,102 @@
+{
+  "project_name": "Data Extraction Tool Dashboard",
+  "theme": "light",
+  "archetype": "4 (Swiss & High-Contrast)",
+  "design_philosophy": {
+    "vibe": "Objective, rigid, functional, high-density.",
+    "core_principles": [
+      "Color is Function Only: 95% of the UI should be monochrome. Color exists only to guide action.",
+      "Density & Data Correlation: Every pixel must be utilized. Use the Control Room grid.",
+      "Expose the Skeleton: Use the 'Grid Borders' surface strategy. Sharp lines, no soft shadows.",
+      "Developer-Grade: Use monospace fonts for all data points, IPs, selectors, and logs."
+    ]
+  },
+  "colors": {
+    "background": "#FFFFFF",
+    "foreground": "#0A0A0A",
+    "card": "#FFFFFF",
+    "card_foreground": "#0A0A0A",
+    "popover": "#FFFFFF",
+    "popover_foreground": "#0A0A0A",
+    "primary": "#002FA7",
+    "primary_foreground": "#FFFFFF",
+    "secondary": "#F3F4F6",
+    "secondary_foreground": "#0A0A0A",
+    "muted": "#F3F4F6",
+    "muted_foreground": "#6B7280",
+    "accent": "#F3F4F6",
+    "accent_foreground": "#0A0A0A",
+    "destructive": "#FF2A00",
+    "destructive_foreground": "#FFFFFF",
+    "warning": "#FFD700",
+    "success": "#00A651",
+    "border": "#E5E7EB",
+    "input": "#E5E7EB",
+    "ring": "#002FA7"
+  },
+  "typography": {
+    "font_family_headings": "IBM Plex Sans, sans-serif",
+    "font_family_body": "IBM Plex Sans, sans-serif",
+    "font_family_mono": "JetBrains Mono, monospace",
+    "rules": {
+      "h1": "text-3xl md:text-4xl font-bold tracking-tight",
+      "h2": "text-2xl md:text-3xl font-bold tracking-tight",
+      "h3": "text-xl font-semibold",
+      "body": "text-sm md:text-base leading-relaxed",
+      "labels": "text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground",
+      "data": "font-mono text-sm"
+    }
+  },
+  "spacing_and_layout": {
+    "grid_system": "MODE B: THE CONTROL ROOM GRID",
+    "gap": "gap-4 or gap-px (for border-collapse look)",
+    "padding": "p-4 or p-6 for panels",
+    "radius": "rounded-none or max rounded-sm",
+    "alignment": "Left-align dense data, tables, and forms. Center-align empty states."
+  },
+  "surface_strategies": {
+    "global": "Grid Borders (The Technical Look). Expose the skeleton. Containers use 1px solid borders (border-border). No drop shadows.",
+    "cards_and_widgets": "Flat background, 1px subtle border. On hover, slight border color darken, no lift.",
+    "headers": "Solid background with a hard bottom border. No glassmorphism. Must have visible navigation on desktop.",
+    "logs_panel": "Terminal variant: Contrast shift. Dark background (#0A0A0A) inside the light app, with monospace green/white text for logs."
+  },
+  "components_strategy": {
+    "tables": "Shadcn tables. Dense spacing (py-2), sticky headers, monospace for specific data columns (IP, proxy, selectors).",
+    "forms": "Shadcn forms, Input, Select, Checkbox. 1px borders, square corners.",
+    "buttons": "Square corners. Primary CTA uses primary color. Hover state must explicitly set text color (e.g., hover:bg-blue-800 hover:text-white). Limit primary color usage to major actions only.",
+    "badges": "Square borders. Signal colors for status (Green=Running/Done, Red=Failed, Yellow=Retrying/Captcha)."
+  },
+  "motion_and_interaction": {
+    "animations": "Minimalist. Use micro-interactions for feedback.",
+    "transitions": "transition-colors duration-150 ease-in-out",
+    "hover_states": "Always explicitly set text color on hover. Focus states must have higher contrast ring (focus:ring-2 focus:ring-primary)."
+  },
+  "icons": {
+    "library": "@phosphor-icons/react",
+    "instructions": "Use for dense dashboards. Install via `yarn add @phosphor-icons/react`",
+    "style": "Regular or bold weight, sharp."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "empty_state_background",
+        "url": "https://images.unsplash.com/photo-1688413708965-d4a7d3b0cc90?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1ODF8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMGdlb21ldHJpYyUyMHRlY2h8ZW58MHx8fHwxNzc1MDU3MTg4fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Dark blue abstract geometric vertical lines, use as a background for login screen or abstract data visualizations."
+      }
+    ],
+    "rules": "No placeholder images. Use provided URLs."
+  },
+  "testing": {
+    "rules": "All interactive elements must have `data-testid` attributes (kebab-case, role-based)."
+  },
+  "instructions_to_main_agent": [
+    "Use pure HTML/Tailwind for structural layout with 'Grid Borders' strategy. Do not rely heavily on pre-built structural components if they enforce soft shadows or large radii.",
+    "Apply Shadcn UI components for all interactive elements (Tables, Forms, Dialogs) but override rounded corners to `rounded-none` or `rounded-sm`.",
+    "Ensure the Logs Viewer component uses a dark theme (bg-black text-white/green font-mono) to contrast with the light dashboard.",
+    "Do not use space grotesk or inter for headings. Use IBM Plex Sans.",
+    "Do not use gradients. Stick to flat, high-contrast colors.",
+    "Limit the use of the primary color strictly to the most critical CTAs.",
+    "Every page MUST have a visible navigation bar on desktop.",
+    "Apply the styling to .js/.jsx files (not .tsx) as the project uses JavaScript."
+  ]
+}
